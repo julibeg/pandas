@@ -4231,7 +4231,10 @@ class DataFrame(NDFrame, OpsMixin):
             resolvers = column_resolvers, index_resolvers
         if "target" not in kwargs:
             kwargs["target"] = self
-        resolvers += ({df_name: self}, )
+        if df_name is not None:
+            if not isinstance(df_name, str):
+                raise ValueError("df_name needs to be a string")
+            resolvers += ({df_name: self}, )
         kwargs["resolvers"] = kwargs.get("resolvers", ()) + tuple(resolvers)
 
         return _eval(expr, inplace=inplace, **kwargs)
