@@ -4117,7 +4117,7 @@ class DataFrame(NDFrame, OpsMixin):
         else:
             return result
 
-    def eval(self, expr: str, inplace: bool = False, **kwargs):
+    def eval(self, expr: str, inplace: bool = False, df_name=None, **kwargs):
         """
         Evaluate a string describing operations on DataFrame columns.
 
@@ -4231,6 +4231,7 @@ class DataFrame(NDFrame, OpsMixin):
             resolvers = column_resolvers, index_resolvers
         if "target" not in kwargs:
             kwargs["target"] = self
+        resolvers += ({df_name: self}, )
         kwargs["resolvers"] = kwargs.get("resolvers", ()) + tuple(resolvers)
 
         return _eval(expr, inplace=inplace, **kwargs)
