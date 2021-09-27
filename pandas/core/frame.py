@@ -4117,7 +4117,7 @@ class DataFrame(NDFrame, OpsMixin):
         else:
             return result
 
-    def eval(self, expr: str, inplace: bool = False, df_name=None, **kwargs):
+    def eval(self, expr: str, inplace: bool = False, self_name=None, **kwargs):
         """
         Evaluate a string describing operations on DataFrame columns.
 
@@ -4133,6 +4133,10 @@ class DataFrame(NDFrame, OpsMixin):
             If the expression contains an assignment, whether to perform the
             operation inplace and mutate the existing DataFrame. Otherwise,
             a new DataFrame is returned.
+        self_name : str
+            Define a name for the current DataFrame to be used in the
+            expression. This can be handy when working with intermediary
+            DataFrames that have not been assigned to a variable.
         **kwargs
             See the documentation for :func:`eval` for complete details
             on the keyword arguments accepted by
@@ -4231,10 +4235,10 @@ class DataFrame(NDFrame, OpsMixin):
             resolvers = column_resolvers, index_resolvers
         if "target" not in kwargs:
             kwargs["target"] = self
-        if df_name is not None:
-            if not isinstance(df_name, str):
-                raise ValueError("df_name needs to be a string")
-            resolvers += ({df_name: self}, )
+        if self_name is not None:
+            if not isinstance(self_name, str):
+                raise ValueError("self_name needs to be a string")
+            resolvers += ({self_name: self}, )
         kwargs["resolvers"] = kwargs.get("resolvers", ()) + tuple(resolvers)
 
         return _eval(expr, inplace=inplace, **kwargs)
